@@ -1,19 +1,13 @@
 ﻿using Unity.Entities;
+using Utilities;
 
 namespace Components
 {
     public struct CellComponent : IComponentData
     {
-        public int index;
-        public Color state;
+        public int Index;
+        public Constants.CellType State;
     }
     
-    public enum Color
-    {
-        Empty,
-        Wall,
-        Red,
-        Blue,
-    }
     
 }

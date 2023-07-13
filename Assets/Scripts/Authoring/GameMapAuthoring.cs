@@ -4,25 +4,28 @@ using Components;
 using Unity.Entities;
 using UnityEngine;
 
-public class GameMapAuthoring : MonoBehaviour
+namespace Authoring
 {
-    public int width;
-
-    public int height;
-
-    public GameObject cellPrefab;
-    // Start is called before the first frame update
-    public class GameMapBaker : Baker<GameMapAuthoring>
+    public class GameMapAuthoring : MonoBehaviour
     {
-        public override void Bake(GameMapAuthoring authoring)
+        public int width;
+
+        public int height;
+
+        public GameObject cellPrefab;
+        // Start is called before the first frame update
+        public class GameMapBaker : Baker<GameMapAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-            AddComponent(entity, new GameMapComponent
+            public override void Bake(GameMapAuthoring authoring)
             {
-                height = authoring.height,
-                width = authoring.width,
-                cell = GetEntity(authoring.cellPrefab, TransformUsageFlags.Dynamic),
-            });
+                Entity entity = GetEntity(TransformUsageFlags.None);
+                AddComponent(entity, new GameMapComponent
+                {
+                    Height = authoring.height,
+                    Width = authoring.width,
+                    Cell = GetEntity(authoring.cellPrefab, TransformUsageFlags.Dynamic),
+                });
+            }
         }
     }
 }

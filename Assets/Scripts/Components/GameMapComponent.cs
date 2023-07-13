@@ -4,8 +4,8 @@ namespace Components
 {
     public struct GameMapComponent : IComponentData
     {
-        public int height;
-        public int width;
-        public Entity cell;
+        public int Height;
+        public int Width;
+        public Entity Cell;
     }
 }
