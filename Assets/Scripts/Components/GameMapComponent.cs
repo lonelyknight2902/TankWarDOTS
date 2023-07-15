@@ -6,6 +6,8 @@ namespace Components
     {
         public int Height;
         public int Width;
-        public Entity Cell;
+        public int Wall;
+        public Entity CellPrefab;
+        public Entity WallPrefab;
     }
 }

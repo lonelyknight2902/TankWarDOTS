@@ -155,7 +155,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 10
   height: 10
+  wall: 10
   cellPrefab: {fileID: 8941571874433663154, guid: df8e25daff6c8f042b859c4d8109cd4b,
+    type: 3}
+  wallPrefab: {fileID: 3449258293400604608, guid: f11150e53c290bb4ea5979beafa4134c,
     type: 3}
 --- !u!4 &955750447
 Transform:
