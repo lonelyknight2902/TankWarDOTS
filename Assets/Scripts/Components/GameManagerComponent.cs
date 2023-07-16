@@ -7,5 +7,6 @@ namespace Components
     public struct GameManagerComponent : IComponentData
     {
         public NativeArray<Constants.CellType> CellArray;
+        public Constants.GameResult state;
     }
 }

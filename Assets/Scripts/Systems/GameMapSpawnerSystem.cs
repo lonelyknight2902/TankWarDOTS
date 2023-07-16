@@ -29,6 +29,7 @@ namespace Systems
             state.EntityManager.SetComponentData(gameManager, new GameManagerComponent
             {
                 CellArray = cellArray,
+                state = Constants.GameResult.Playing
             });
             var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
@@ -74,7 +75,7 @@ namespace Systems
         public NativeArray<Constants.CellType> cellArray;
         public void Execute(int index)
         {
-            cellArray[index] = Constants.CellType.Red;
+            cellArray[index] = Constants.CellType.Empty;
         }
     }
 

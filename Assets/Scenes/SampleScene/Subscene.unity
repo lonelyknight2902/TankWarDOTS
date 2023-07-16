@@ -134,6 +134,8 @@ GameObject:
   - component: {fileID: 955750447}
   - component: {fileID: 955750446}
   - component: {fileID: 955750448}
+  - component: {fileID: 955750449}
+  - component: {fileID: 955750450}
   m_Layer: 0
   m_Name: Config
   m_TagString: Untagged
@@ -191,3 +193,29 @@ MonoBehaviour:
   blue: {fileID: 2100000, guid: 155e9f9342919b6408d54caeb6c21762, type: 2}
   red: {fileID: 2100000, guid: d7074777e2033c343a03e009b5a04491, type: 2}
   wall: {fileID: 2100000, guid: 5e54b8cf50d30684ab0e1520795d4c41, type: 2}
+--- !u!114 &955750449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955750445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4020375f9f94bbd89359b5515382151, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &955750450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955750445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42190d174e8c485cb0c00643d963b2fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 5139507889376559463, guid: bef1191137c6a374e81a4773f7648601, type: 3}
