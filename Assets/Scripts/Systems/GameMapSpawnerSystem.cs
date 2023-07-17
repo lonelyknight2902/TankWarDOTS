@@ -26,10 +26,17 @@ namespace Systems
             var cellArray = new NativeArray<Constants.CellType>(gameMap.Width * gameMap.Height, Allocator.Persistent);
             var baseTime = System.DateTime.Now.TimeOfDay.TotalSeconds;
             state.EntityManager.AddComponent<GameManagerComponent>(gameManager);
+            state.EntityManager.AddComponentData(gameManager, new GameTurnComponent
+            {
+                Turn = 1,
+            });
+            state.EntityManager.AddComponent<DetermineTurnState>(gameManager);
             state.EntityManager.SetComponentData(gameManager, new GameManagerComponent
             {
+                Width = gameMap.Width,
+                Height = gameMap.Height,
                 CellArray = cellArray,
-                state = Constants.GameResult.Playing
+                State = Constants.GameResult.Playing
             });
             var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);

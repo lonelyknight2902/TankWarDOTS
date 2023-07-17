@@ -22,11 +22,12 @@ namespace Systems
             var playerPrefab = SystemAPI.GetSingleton<PlayerComponent>().Player;
             var material = SystemAPI.GetSingleton<GameMaterialsComponent>();
             var mesh = SystemAPI.GetSingleton<GameMeshesComponent>();
+            var game = SystemAPI.GetSingleton<GameMapComponent>();
             var player1 = state.EntityManager.Instantiate(playerPrefab);
             var player2 = state.EntityManager.Instantiate(playerPrefab);
             state.EntityManager.SetComponentData(player1, new LocalTransform
             {
-                Position = new float3(0,1,0),
+                Position = Functions.GetCellPosition(game.Width, game.Height, 0) + new float3(0,1,0),
                 Rotation = quaternion.identity,
                 Scale = 1f
             });
@@ -39,13 +40,23 @@ namespace Systems
 
             state.EntityManager.AddComponentData(player1, new PlayerInfoComponent
             {
+                id = 1,
+                positionIndex = 0,
                 type = Constants.TankType.Blue,
                 territories = 0
             });
+
+            state.EntityManager.AddComponentData(player1, new CapturedComponent
+            {
+                index = 0,
+                PlayerCaptured = Constants.CellType.Blue
+            });
+
+            // state.EntityManager.AddComponent<NextPossibleMovesComponent>(player1);
             
             state.EntityManager.SetComponentData(player2, new LocalTransform
             {
-                Position = new float3(9,1,9),
+                Position = Functions.GetCellPosition(game.Width, game.Height, game.Width * game.Height - 1) + new float3(0,1,0),
                 Rotation = quaternion.identity,
                 Scale = 1f
             });
@@ -58,9 +69,19 @@ namespace Systems
             
             state.EntityManager.AddComponentData(player2, new PlayerInfoComponent
             {
+                id = 2,
+                positionIndex = game.Width * game.Height - 1,
                 type = Constants.TankType.Red,
                 territories = 0
             });
+            
+            state.EntityManager.AddComponentData(player1, new CapturedComponent
+            {
+                index = game.Width * game.Height - 1,
+                PlayerCaptured = Constants.CellType.Red
+            });
+            
+            // state.EntityManager.AddComponent<NextPossibleMovesComponent>(player1);
 
             state.Enabled = false;
         }
