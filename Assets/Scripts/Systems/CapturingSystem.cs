@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 using UnityEngine.Rendering;
 using Utilities;
 
@@ -39,6 +40,7 @@ namespace Systems
 
             foreach (var (captured, entity) in SystemAPI.Query<RefRO<CapturedComponent>>().WithEntityAccess())
             {
+                Debug.Log(captured.ValueRO.index);
                 cellArray[captured.ValueRO.index] = captured.ValueRO.PlayerCaptured;
                 ecb.RemoveComponent<CapturedComponent>(entity);
                 ecb.AddComponent<AddTerritoriesScoreTag>(entity);

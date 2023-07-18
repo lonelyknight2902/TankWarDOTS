@@ -8,6 +8,8 @@ using Utilities;
 namespace Systems
 {
     [UpdateAfter(typeof(GameMapSpawnerSystem))]
+    [UpdateAfter(typeof(MoveSystem))]
+    [UpdateBefore(typeof(CapturingSystem))]
     public partial struct PlayerSpawnerSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
@@ -15,6 +17,7 @@ namespace Systems
             state.RequireForUpdate<GameMeshesComponent>();
             state.RequireForUpdate<GameMaterialsComponent>();
             state.RequireForUpdate<PlayerComponent>();
+            state.RequireForUpdate<GameMapComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -75,7 +78,7 @@ namespace Systems
                 territories = 0
             });
             
-            state.EntityManager.AddComponentData(player1, new CapturedComponent
+            state.EntityManager.AddComponentData(player2, new CapturedComponent
             {
                 index = game.Width * game.Height - 1,
                 PlayerCaptured = Constants.CellType.Red

@@ -42,7 +42,7 @@ namespace Systems
                 moveList.Add(Constants.Direction.Left);
             }
 
-            if (playerIndex + 1 % gameManager.Width != 0 && rightIndex < gameManager.Height * gameManager.Width && gameManager.CellArray[rightIndex] == Constants.CellType.Empty)
+            if ((playerIndex + 1) % gameManager.Width != 0 && rightIndex < gameManager.Height * gameManager.Width && gameManager.CellArray[rightIndex] == Constants.CellType.Empty)
             {
                 moveList.Add(Constants.Direction.Right);
             }

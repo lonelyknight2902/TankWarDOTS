@@ -18,14 +18,11 @@ namespace Systems
         {
             var gameState = SystemAPI.GetSingletonEntity<DetermineTurnState>();
             var turn = SystemAPI.GetSingleton<GameTurnComponent>().Turn;
-            Debug.Log(turn);
             var ecb = new EntityCommandBuffer(Allocator.Temp);
             foreach (var (info, entity) in SystemAPI.Query<RefRO<PlayerInfoComponent>>().WithEntityAccess())
             {
-                Debug.Log(info.ValueRO.id);
                 if (info.ValueRO.id == turn)
                 {
-                    Debug.Log("haha");
                     ecb.AddComponent<PlayerTurnTagComponent>(entity);
                 }
             }

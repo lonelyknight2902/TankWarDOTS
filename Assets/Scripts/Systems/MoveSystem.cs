@@ -56,7 +56,6 @@ namespace Systems
             var destinationPosition = Functions.GetCellPosition(gameManager.Width, gameManager.Height, destinationIndex);
             var distancesq = (destinationPosition.x - playerPosition.x) * (destinationPosition.x - playerPosition.x) +
                              (destinationPosition.z - playerPosition.z) * (destinationPosition.z - playerPosition.z);
-            Debug.Log(distancesq);
             if (distancesq < 0.01f)
             {
                 state.EntityManager.SetComponentData(currentPlayer, new LocalTransform()
