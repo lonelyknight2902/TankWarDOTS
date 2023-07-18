@@ -20,7 +20,7 @@ namespace Systems
             var playerIndex = state.EntityManager.GetComponentData<PlayerInfoComponent>(currentPlayer).positionIndex;
             var gameManager = SystemAPI.GetSingleton<GameManagerComponent>();
             var gameState = SystemAPI.GetSingletonEntity<CalculateNextPossibleMovesState>();
-            var moveList = new NativeList<Constants.Direction>(Allocator.Temp);
+            var moveList = new NativeList<Constants.Direction>(Allocator.Persistent);
             var upIndex = playerIndex + gameManager.Width;
             var downIndex = playerIndex - gameManager.Width;
             var leftIndex = playerIndex - 1;

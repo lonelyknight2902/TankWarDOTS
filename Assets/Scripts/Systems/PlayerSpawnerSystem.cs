@@ -55,6 +55,8 @@ namespace Systems
                 PlayerCaptured = Constants.CellType.Blue
             });
 
+            state.EntityManager.AddComponent<PlayerTagComponent>(player1);
+
             // state.EntityManager.AddComponent<NextPossibleMovesComponent>(player1);
             
             state.EntityManager.SetComponentData(player2, new LocalTransform
@@ -84,6 +86,8 @@ namespace Systems
                 PlayerCaptured = Constants.CellType.Red
             });
             
+            state.EntityManager.AddComponent<BotTagComponent>(player2);
+
             // state.EntityManager.AddComponent<NextPossibleMovesComponent>(player1);
 
             state.Enabled = false;
