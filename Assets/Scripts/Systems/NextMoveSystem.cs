@@ -15,6 +15,8 @@ namespace Systems
         {
             state.RequireForUpdate<NextPossibleMovesComponent>();
             state.RequireForUpdate<PlayerTurnTagComponent>();
+            state.RequireForUpdate<PlayerPositionIndexComponent>();
+            state.RequireForUpdate<GameManagerComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -62,10 +64,13 @@ namespace Systems
                 var randomData = Unity.Mathematics.Random.CreateFromIndex((uint) baseTime);
                 var nextMove = possibleMoves[randomData.NextInt(0, possibleMoves.Length)];
                 possibleMoves.Dispose();
+                var playerId = state.EntityManager.GetComponentData<PlayerInfoComponent>(currentPlayer).id;
+                var gamePos = SystemAPI.GetSingleton<PlayerPositionIndexComponent>();
                 state.EntityManager.RemoveComponent<NextPossibleMovesComponent>(currentPlayer);
+                var gameState = SystemAPI.GetSingleton<GameManagerComponent>();
                 state.EntityManager.AddComponentData(currentPlayer, new NextMoveComponent
                 {
-                    NextMove = nextMove
+                    NextMove = Minimax.NextMove(gameState.CellArray, gameState.Width, gameState.Height, playerId, gamePos.Player1, gamePos.Player2)
                 });
             }
         }

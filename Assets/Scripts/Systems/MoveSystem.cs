@@ -14,6 +14,8 @@ namespace Systems
             state.RequireForUpdate<NextMoveComponent>();
             state.RequireForUpdate<PlayerTurnTagComponent>();
             state.RequireForUpdate<GameManagerComponent>();
+            state.RequireForUpdate<PlayerPositionIndexComponent>();
+            state.RequireForUpdate<GameTurnComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -22,6 +24,7 @@ namespace Systems
             var currentPlayer = SystemAPI.GetSingletonEntity<PlayerTurnTagComponent>();
             var playerInfo = state.EntityManager.GetComponentData<PlayerInfoComponent>(currentPlayer);
             var gameManager = SystemAPI.GetSingleton<GameManagerComponent>();
+            var gamePos = SystemAPI.GetSingleton<PlayerPositionIndexComponent>();
             var gameTurn = SystemAPI.GetSingletonEntity<GameTurnComponent>();
             var currentIndex = playerInfo.positionIndex;
             var speed = 1;
@@ -71,6 +74,8 @@ namespace Systems
                     territories = playerInfo.territories,
                     type = playerInfo.type
                 });
+                if (playerInfo.id == 1) gamePos.Player1 = playerInfo.positionIndex;
+                else gamePos.Player2 = playerInfo.positionIndex;
                 state.EntityManager.RemoveComponent<NextMoveComponent>(currentPlayer);
                 state.EntityManager.SetComponentData(gameTurn, new GameTurnComponent
                 {

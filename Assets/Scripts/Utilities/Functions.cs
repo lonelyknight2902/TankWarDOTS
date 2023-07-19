@@ -10,6 +10,11 @@ namespace Utilities
             return new float3(index % width, 0, (int) index / height);
         }
         
+        public static int2 GetCellPositionInt2(int width, int height, int index)
+        {
+            return new int2(index % width,  (int) index / height);
+        }
+        
         public static bool In(this Constants.Direction val, NativeList<Constants.Direction> values)
         {
             for (int i = 0; i < values.Length; i++)
@@ -36,10 +41,10 @@ namespace Utilities
             int directionIndex = GetIndex(width, height, index, direction);
             return direction switch
             {
-                Constants.Direction.Up => directionIndex < width * height && cellArray[directionIndex] != Constants.CellType.Empty,
-                Constants.Direction.Down => directionIndex >= 0 && cellArray[directionIndex] != Constants.CellType.Empty,
-                Constants.Direction.Left => index % width != 0 && cellArray[directionIndex] != Constants.CellType.Empty,
-                Constants.Direction.Right => (index + 1) % width != 0 && cellArray[directionIndex] != Constants.CellType.Empty,
+                Constants.Direction.Up => directionIndex < width * height && cellArray[directionIndex] == Constants.CellType.Empty,
+                Constants.Direction.Down => directionIndex >= 0 && cellArray[directionIndex] == Constants.CellType.Empty,
+                Constants.Direction.Left => index % width != 0 && cellArray[directionIndex] == Constants.CellType.Empty,
+                Constants.Direction.Right => (index + 1) % width != 0 && cellArray[directionIndex] == Constants.CellType.Empty,
                 _ => false
             };
         }

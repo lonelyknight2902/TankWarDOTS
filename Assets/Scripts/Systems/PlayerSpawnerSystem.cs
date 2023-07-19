@@ -3,6 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
+using Unity.VisualScripting;
 using Utilities;
 
 namespace Systems
@@ -18,6 +19,7 @@ namespace Systems
             state.RequireForUpdate<GameMaterialsComponent>();
             state.RequireForUpdate<PlayerComponent>();
             state.RequireForUpdate<GameMapComponent>();
+            state.RequireForUpdate<GameManagerComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
@@ -26,6 +28,7 @@ namespace Systems
             var material = SystemAPI.GetSingleton<GameMaterialsComponent>();
             var mesh = SystemAPI.GetSingleton<GameMeshesComponent>();
             var game = SystemAPI.GetSingleton<GameMapComponent>();
+            var gameManager = SystemAPI.GetSingletonEntity<GameManagerComponent>();
             var player1 = state.EntityManager.Instantiate(playerPrefab);
             var player2 = state.EntityManager.Instantiate(playerPrefab);
             state.EntityManager.SetComponentData(player1, new LocalTransform
@@ -89,6 +92,11 @@ namespace Systems
             state.EntityManager.AddComponent<BotTagComponent>(player2);
 
             // state.EntityManager.AddComponent<NextPossibleMovesComponent>(player1);
+            state.EntityManager.AddComponentData(gameManager, new PlayerPositionIndexComponent
+            {
+                Player1 = 0,
+                Player2 = 99
+            });
 
             state.Enabled = false;
         }
