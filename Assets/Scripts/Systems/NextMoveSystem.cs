@@ -82,7 +82,8 @@ namespace Systems
                 {
                     Debug.Log("GameOver");
                 }
-                
+
+                nextBestMove.Dispose();
             }
         }
 

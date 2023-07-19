@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Utilities
@@ -8,10 +9,10 @@ namespace Utilities
     {
         public static NativeList<Constants.Direction> NextMove(NativeArray<Constants.CellType> gameState, int width, int height, int player, int player1, int player2)
         {
+            var start = Time.time;
             var newArray = new NativeArray<Constants.CellType>(gameState.Length, Allocator.Temp);
             newArray.CopyFrom(gameState);
             var moveList = new NativeList<Constants.Direction>(Allocator.Persistent);
-            Debug.Log(newArray[0]);
             Constants.Direction bestMove;
             if (player == 1)
             {
@@ -43,7 +44,7 @@ namespace Utilities
                 {
                     int index = Functions.GetIndex(width, height, player2, move);
                     newArray[index] = Constants.CellType.Red;
-                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 10, 1, player1,index, 10, 10);
+                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 10, 1, player1,index, Int32.MinValue, Int32.MaxValue);
                     Debug.Log(move + ": " + moveValue);
                     if (moveValue < value) 
                     {
@@ -57,7 +58,7 @@ namespace Utilities
                     newArray[index] = Constants.CellType.Empty;
                 }
             }
-
+            Debug.Log((Time.time - start).ToString());
             newArray.Dispose();
             return moveList;
         }
@@ -81,6 +82,8 @@ namespace Utilities
                     int moveValue = MinimaxAlphaBeta(gameState, width, height, depth - 1, 2, index, player2, alpha, beta);
                     if (moveValue > value) value = moveValue;
                     gameState[index] = Constants.CellType.Empty;
+                    alpha = math.max(alpha, value);
+                    if (beta <= alpha) break;
                 }
             }
             else
@@ -94,6 +97,8 @@ namespace Utilities
                     int moveValue = MinimaxAlphaBeta(gameState, width, height, depth - 1, 1, player1,index, alpha, beta);
                     if (moveValue < value) value = moveValue;
                     gameState[index] = Constants.CellType.Empty;
+                    beta = math.min(beta, value);
+                    if (beta <= alpha) break;
                 }
             }
 
@@ -118,7 +123,9 @@ namespace Utilities
             {
                 score += 50;
             }
-            score += Functions.PossibleMove(gameState, width, height, player1).Length;
+
+            var possibleMovePlayer1 = Functions.PossibleMove(gameState, width, height, player1);
+            score += possibleMovePlayer1.Length;
             if (IsStuck(gameState, width, height, player2))
             {
                 score += width*height;
@@ -135,20 +142,11 @@ namespace Utilities
                 score += -50;
             }
             
-            score += -Functions.PossibleMove(gameState, width, height, player2).Length;
+            var possibleMovePlayer2 = Functions.PossibleMove(gameState, width, height, player2);
+            score += -possibleMovePlayer2.Length;
 
-            foreach (var cell in gameState)
-            {
-                if (cell == Constants.CellType.Blue)
-                {
-                    score += 1;
-                }
-                else if (cell == Constants.CellType.Red)
-                {
-                    score -= 1;
-                }
-            }
-
+            possibleMovePlayer1.Dispose();
+            possibleMovePlayer2.Dispose();
             return score;
         }
 
@@ -170,10 +168,13 @@ namespace Utilities
 
         public static bool IsStuck(NativeArray<Constants.CellType> gameState, int width, int height, int index)
         {
-            if (Functions.PossibleMove(gameState, width, height, index).Length == 0)
+            var possibleMove = Functions.PossibleMove(gameState, width, height, index);
+            if (possibleMove.Length == 0)
             {
                 return true;
             }
+
+            possibleMove.Dispose();
             return false;
         }
         
