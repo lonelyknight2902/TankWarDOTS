@@ -6,13 +6,13 @@ namespace Utilities
 {
     public static class Minimax
     {
-        public static Constants.Direction NextMove(NativeArray<Constants.CellType> gameState, int width, int height, int player, int player1, int player2)
+        public static NativeList<Constants.Direction> NextMove(NativeArray<Constants.CellType> gameState, int width, int height, int player, int player1, int player2)
         {
-            Debug.Log(width + " " + height);
-            var newArray = new NativeArray<Constants.CellType>(gameState.Length, Allocator.Persistent);
+            var newArray = new NativeArray<Constants.CellType>(gameState.Length, Allocator.Temp);
             newArray.CopyFrom(gameState);
+            var moveList = new NativeList<Constants.Direction>(Allocator.Persistent);
             Debug.Log(newArray[0]);
-            Constants.Direction bestMove = Constants.Direction.Down;
+            Constants.Direction bestMove;
             if (player == 1)
             {
                 int value = Int32.MinValue;
@@ -25,7 +25,11 @@ namespace Utilities
                     if (moveValue > value)
                     {
                         value = moveValue;
-                        bestMove = move;
+                        moveList.Clear();
+                        moveList.Add(move);
+                    } else if (moveValue == value)
+                    {
+                        moveList.Add(move);
                     }
                 }
             }
@@ -33,35 +37,36 @@ namespace Utilities
             {
                 Debug.Log("Possible move");
                 int value = Int32.MaxValue;
-                Debug.Log(player2);
                 var nextMoves = Functions.PossibleMove(newArray, width, height, player2);
-                Debug.Log(newArray[player2 - 1] + " " + newArray[player2 - width]);
                 Debug.Log("Next moves:" + nextMoves.Length);
                 foreach (var move in nextMoves)
                 {
                     int index = Functions.GetIndex(width, height, player2, move);
                     newArray[index] = Constants.CellType.Red;
-                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 10, 1, player1,index, 10, 10);
+                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 20, 1, player1,index, 10, 10);
                     Debug.Log(move + ": " + moveValue);
                     if (moveValue < value) 
                     {
                         value = moveValue;
-                        bestMove = move;
+                        moveList.Clear();
+                        moveList.Add(move);
+                    } else if (moveValue == value)
+                    {
+                        moveList.Add(move);
                     }
-
                     newArray[index] = Constants.CellType.Empty;
                 }
             }
 
             newArray.Dispose();
-            return bestMove;
+            return moveList;
         }
     
         public static int MinimaxAlphaBeta(NativeArray<Constants.CellType> gameState, int width, int height, int depth, int player, int player1, int player2, int alpha, int beta)
         {
-            if (depth == 0)
+            if (depth == 0 || IsStuck(gameState, width, height, player == 1 ? player1 : player2))
             {
-                return EvaluateCell(gameState, width, height, player, player1, player2);
+                return EvaluateCell(gameState, width, height, player1, player2);
             }
 
             int value;
@@ -95,35 +100,39 @@ namespace Utilities
             return value;
         }
     
-        public static int EvaluateCell(NativeArray<Constants.CellType> gameState, int width, int height, int player, int player1, int player2)
+        public static int EvaluateCell(NativeArray<Constants.CellType> gameState, int width, int height, int player1, int player2)
         {
             int score = 0;
-            if (player == 1)
+            if (IsStuck(gameState, width, height, player1))
             {
-                if (IsStuck(gameState, width, height, player1))
-                {
-                    return -10;
-                } 
-                if (IsCenter(width, height, player1))
-                {
-                    score += 5;
-                }
-                else
-                {
-                    score = Functions.PossibleMove(gameState, width, height, player1).Length;
-                }
-            } else if (player == 2)
+                score += -width*height;
+            } 
+            if (IsCenter(width, height, player1))
             {
-                if (IsStuck(gameState, width, height, player1))
+                score += 50;
+            }
+            score += Functions.PossibleMove(gameState, width, height, player1).Length;
+            if (IsStuck(gameState, width, height, player2))
+            {
+                score += width*height;
+            } 
+            if (IsCenter(width, height, player2))
+            {
+                score += -50;
+            }
+            
+            score += -Functions.PossibleMove(gameState, width, height, player2).Length;
+
+            foreach (var cell in gameState)
+            {
+                if (cell == Constants.CellType.Blue)
                 {
-                    return 10;
-                } 
-                if (IsCenter(width, height, player1))
-                {
-                    score += -5;
+                    score += 1;
                 }
-                
-                score += -Functions.PossibleMove(gameState, width, height, player1).Length;
+                else if (cell == Constants.CellType.Red)
+                {
+                    score -= 1;
+                }
             }
 
             return score;

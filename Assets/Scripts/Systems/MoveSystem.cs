@@ -23,8 +23,9 @@ namespace Systems
             var nextMove = SystemAPI.GetSingleton<NextMoveComponent>().NextMove;
             var currentPlayer = SystemAPI.GetSingletonEntity<PlayerTurnTagComponent>();
             var playerInfo = state.EntityManager.GetComponentData<PlayerInfoComponent>(currentPlayer);
-            var gameManager = SystemAPI.GetSingleton<GameManagerComponent>();
-            var gamePos = SystemAPI.GetSingleton<PlayerPositionIndexComponent>();
+            var game = SystemAPI.GetSingletonEntity<GameManagerComponent>();
+            var gameManager = state.EntityManager.GetComponentData<GameManagerComponent>(game);
+            var gamePos = state.EntityManager.GetComponentData<PlayerPositionIndexComponent>(game);
             var gameTurn = SystemAPI.GetSingletonEntity<GameTurnComponent>();
             var currentIndex = playerInfo.positionIndex;
             var speed = 1;
@@ -74,8 +75,16 @@ namespace Systems
                     territories = playerInfo.territories,
                     type = playerInfo.type
                 });
-                if (playerInfo.id == 1) gamePos.Player1 = playerInfo.positionIndex;
-                else gamePos.Player2 = playerInfo.positionIndex;
+                if (playerInfo.id == 1) state.EntityManager.SetComponentData(game, new PlayerPositionIndexComponent()
+                {
+                    Player1 = destinationIndex,
+                    Player2 = gamePos.Player2
+                });
+                else state.EntityManager.SetComponentData(game, new PlayerPositionIndexComponent()
+                {
+                    Player1 = gamePos.Player1,
+                    Player2 = destinationIndex
+                });
                 state.EntityManager.RemoveComponent<NextMoveComponent>(currentPlayer);
                 state.EntityManager.SetComponentData(gameTurn, new GameTurnComponent
                 {

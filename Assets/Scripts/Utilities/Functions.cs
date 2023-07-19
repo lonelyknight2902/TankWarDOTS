@@ -49,6 +49,21 @@ namespace Utilities
             };
         }
 
+        public static bool IsAdjacent(int width, int player1, int player2)
+        {
+            if (math.abs(player1 - player2) == width)
+            {
+                return true;
+            }
+
+            if (math.abs(player1 - player2) == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static NativeList<Constants.Direction> PossibleMove(NativeArray<Constants.CellType> cellArray, int width, int height, int index)
         {
             NativeList<Constants.Direction> moves = new NativeList<Constants.Direction>(Allocator.Persistent);

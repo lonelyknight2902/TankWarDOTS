@@ -68,10 +68,21 @@ namespace Systems
                 var gamePos = SystemAPI.GetSingleton<PlayerPositionIndexComponent>();
                 state.EntityManager.RemoveComponent<NextPossibleMovesComponent>(currentPlayer);
                 var gameState = SystemAPI.GetSingleton<GameManagerComponent>();
-                state.EntityManager.AddComponentData(currentPlayer, new NextMoveComponent
+                var nextBestMove = Minimax.NextMove(gameState.CellArray, gameState.Width, gameState.Height, playerId,
+                    gamePos.Player1, gamePos.Player2);
+                if (nextBestMove.Length != 0)
                 {
-                    NextMove = Minimax.NextMove(gameState.CellArray, gameState.Width, gameState.Height, playerId, gamePos.Player1, gamePos.Player2)
-                });
+                    state.EntityManager.AddComponentData(currentPlayer, new NextMoveComponent
+                    {
+                        NextMove = nextBestMove[randomData.NextInt(0, nextBestMove.Length)]
+                        // NextMove = nextMove
+                    });
+                }
+                else
+                {
+                    Debug.Log("GameOver");
+                }
+                
             }
         }
 
