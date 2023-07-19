@@ -43,7 +43,7 @@ namespace Utilities
                 {
                     int index = Functions.GetIndex(width, height, player2, move);
                     newArray[index] = Constants.CellType.Red;
-                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 20, 1, player1,index, 10, 10);
+                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 10, 1, player1,index, 10, 10);
                     Debug.Log(move + ": " + moveValue);
                     if (moveValue < value) 
                     {
@@ -106,6 +106,13 @@ namespace Utilities
             if (IsStuck(gameState, width, height, player1))
             {
                 score += -width*height;
+                foreach (var cell in gameState)
+                {
+                    if (cell == Constants.CellType.Blue)
+                    {
+                        score += 1;
+                    }
+                }
             } 
             if (IsCenter(width, height, player1))
             {
@@ -115,6 +122,13 @@ namespace Utilities
             if (IsStuck(gameState, width, height, player2))
             {
                 score += width*height;
+                foreach (var cell in gameState)
+                {
+                    if (cell == Constants.CellType.Red)
+                    {
+                        score += -1;
+                    }
+                }
             } 
             if (IsCenter(width, height, player2))
             {
@@ -148,6 +162,11 @@ namespace Utilities
 
             return centerX && centerY;
         }
+
+        // public static NativeList<Constants.CellType> GetCenterBlock(int gameState, int width, int height)
+        // {
+        //     
+        // }
 
         public static bool IsStuck(NativeArray<Constants.CellType> gameState, int width, int height, int index)
         {
