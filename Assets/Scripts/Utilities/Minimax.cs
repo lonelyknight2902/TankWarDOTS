@@ -22,7 +22,7 @@ namespace Utilities
                 {
                     int index = Functions.GetIndex(width, height, player1, move);
                     newArray[index] = Constants.CellType.Blue;
-                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 10, 2, index, player2, 10, 10);
+                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 7, 2, index, player2, Int32.MinValue, Int32.MaxValue);
                     if (moveValue > value)
                     {
                         value = moveValue;
@@ -36,16 +36,16 @@ namespace Utilities
             }
             else
             {
-                Debug.Log("Possible move");
+                // Debug.Log("Possible move");
                 int value = Int32.MaxValue;
                 var nextMoves = Functions.PossibleMove(newArray, width, height, player2);
-                Debug.Log("Next moves:" + nextMoves.Length);
+                // Debug.Log("Next moves:" + nextMoves.Length);
                 foreach (var move in nextMoves)
                 {
                     int index = Functions.GetIndex(width, height, player2, move);
                     newArray[index] = Constants.CellType.Red;
-                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 10, 1, player1,index, Int32.MinValue, Int32.MaxValue);
-                    Debug.Log(move + ": " + moveValue);
+                    int moveValue = MinimaxAlphaBeta(newArray, width, height, 12, 1, player1,index, Int32.MinValue, Int32.MaxValue);
+                    // Debug.Log(move + ": " + moveValue);
                     if (moveValue < value) 
                     {
                         value = moveValue;
@@ -53,19 +53,19 @@ namespace Utilities
                         moveList.Add(move);
                     } else if (moveValue == value)
                     {
-                        moveList.Add(move);
+                        if(!Constants.Direction.Down.In(moveList) && !Constants.Direction.Left.In(moveList)) moveList.Add(move);
                     }
                     newArray[index] = Constants.CellType.Empty;
                 }
             }
-            Debug.Log((Time.time - start).ToString());
+            // Debug.Log((Time.time - start).ToString());
             newArray.Dispose();
             return moveList;
         }
     
         public static int MinimaxAlphaBeta(NativeArray<Constants.CellType> gameState, int width, int height, int depth, int player, int player1, int player2, int alpha, int beta)
         {
-            if (depth == 0 || IsStuck(gameState, width, height, player == 1 ? player1 : player2))
+            if (depth == 0 || IsStuck(gameState, width, height, player1) || IsStuck(gameState, width, height, player2))
             {
                 return EvaluateCell(gameState, width, height, player1, player2);
             }
@@ -85,6 +85,8 @@ namespace Utilities
                     alpha = math.max(alpha, value);
                     if (beta <= alpha) break;
                 }
+
+                nextMoves.Dispose();
             }
             else
             {
@@ -100,6 +102,8 @@ namespace Utilities
                     beta = math.min(beta, value);
                     if (beta <= alpha) break;
                 }
+
+                nextMoves.Dispose();
             }
 
             return value;
@@ -110,7 +114,7 @@ namespace Utilities
             int score = 0;
             if (IsStuck(gameState, width, height, player1))
             {
-                score += -width*height;
+                score += -1000;
                 foreach (var cell in gameState)
                 {
                     if (cell == Constants.CellType.Blue)
@@ -119,16 +123,16 @@ namespace Utilities
                     }
                 }
             } 
-            if (IsCenter(width, height, player1))
-            {
-                score += 50;
-            }
+            // if (IsCenter(width, height, player1))
+            // {
+            //     score += 50;
+            // }
 
             var possibleMovePlayer1 = Functions.PossibleMove(gameState, width, height, player1);
             score += possibleMovePlayer1.Length;
             if (IsStuck(gameState, width, height, player2))
             {
-                score += width*height;
+                score += 1000;
                 foreach (var cell in gameState)
                 {
                     if (cell == Constants.CellType.Red)
@@ -137,14 +141,42 @@ namespace Utilities
                     }
                 }
             } 
-            if (IsCenter(width, height, player2))
-            {
-                score += -50;
-            }
-            
-            var possibleMovePlayer2 = Functions.PossibleMove(gameState, width, height, player2);
-            score += -possibleMovePlayer2.Length;
+            // if (IsCenter(width, height, player2))
+            // {
+            //     score += -50;
+            // }
 
+            var possibleMovePlayer2 = Functions.PossibleMove(gameState, width, height, player2);
+            if (possibleMovePlayer2.Length == 2)
+            {
+                score += -3;
+            } else if (possibleMovePlayer2.Length == 1)
+            {
+                score += -2;
+            }
+            else if(possibleMovePlayer2.Length == 3)
+            {
+                score += -1;
+            }
+
+            var center = GetCenterCell(width, height);
+            foreach (var cell in center)
+            {
+                if (gameState[cell] == Constants.CellType.Blue)
+                {
+                    score += 50;
+                } else if (gameState[cell] == Constants.CellType.Red)
+                {
+                    score -= 50;
+                }
+            }
+
+            if (Functions.IsAdjacent(width, player1, player2))
+            {
+                score = 0;
+            }
+
+            center.Dispose();
             possibleMovePlayer1.Dispose();
             possibleMovePlayer2.Dispose();
             return score;
@@ -160,6 +192,42 @@ namespace Utilities
 
             return centerX && centerY;
         }
+
+        public static NativeList<int> GetCenterCell(int width, int height)
+        {
+            var result = new NativeList<int>(Allocator.Persistent);
+            if (height % 2 == 0)
+            {
+                if (width % 2 == 0)
+                {
+                    result.Add(height / 2 * width + width / 2 - 1);
+                    result.Add(height / 2 * width + width / 2);
+                    result.Add((height / 2 + 1) * width + width / 2 - 1);
+                    result.Add((height / 2 + 1) * width + width / 2);
+                }
+                else
+                {
+                    result.Add(height / 2 * width + width / 2);
+                    result.Add((height / 2 + 1) * width + width / 2);
+                }
+            }
+            else
+            {
+                if (width % 2 == 0)
+                {
+                    result.Add(height / 2 * width + width / 2 - 1);
+                    result.Add(height / 2 * width + width / 2);
+                }
+                else
+                {
+                    result.Add(height / 2 * width + width / 2);
+                }
+            }
+
+            return result;
+        }
+
+        
 
         // public static NativeList<Constants.CellType> GetCenterBlock(int gameState, int width, int height)
         // {

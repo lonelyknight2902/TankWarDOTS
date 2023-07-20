@@ -1,6 +1,7 @@
 ﻿using Components;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Windows;
 using Utilities;
@@ -84,6 +85,22 @@ namespace Systems
                 }
 
                 nextBestMove.Dispose();
+                // var ecb = new EntityCommandBuffer(Allocator.Persistent);
+                // var job = new NextMoveJob
+                // {
+                //     GameState = gameState.CellArray,
+                //     Width = gameState.Width,
+                //     Height = gameState.Height,
+                //     Player = playerId,
+                //     Player1 = gamePos.Player1,
+                //     Player2 = gamePos.Player2,
+                //     Ecb = ecb,
+                //     PlayerEntity = currentPlayer
+                // };
+                //
+                // state.Dependency = job.Schedule(state.Dependency);
+                // state.Dependency.Complete();
+                // ecb.Dispose();
             }
         }
 

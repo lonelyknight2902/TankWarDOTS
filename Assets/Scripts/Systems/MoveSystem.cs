@@ -28,7 +28,7 @@ namespace Systems
             var gamePos = state.EntityManager.GetComponentData<PlayerPositionIndexComponent>(game);
             var gameTurn = SystemAPI.GetSingletonEntity<GameTurnComponent>();
             var currentIndex = playerInfo.positionIndex;
-            var speed = 1;
+            var speed = 2;
             
             var destinationIndex = nextMove switch
             {

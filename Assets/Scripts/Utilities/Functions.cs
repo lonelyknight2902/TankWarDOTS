@@ -66,7 +66,7 @@ namespace Utilities
 
         public static NativeList<Constants.Direction> PossibleMove(NativeArray<Constants.CellType> cellArray, int width, int height, int index)
         {
-            NativeList<Constants.Direction> moves = new NativeList<Constants.Direction>(Allocator.Persistent);
+            NativeList<Constants.Direction> moves = new NativeList<Constants.Direction>(Allocator.Temp);
             if (IsValidMove(cellArray, width, height, index, Constants.Direction.Up)) moves.Add(Constants.Direction.Up);
             if (IsValidMove(cellArray, width, height, index, Constants.Direction.Down)) moves.Add(Constants.Direction.Down);
             if (IsValidMove(cellArray, width, height, index, Constants.Direction.Left)) moves.Add(Constants.Direction.Left);
